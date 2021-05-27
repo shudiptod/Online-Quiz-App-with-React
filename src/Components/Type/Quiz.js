@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import ReactCountdownClock from 'react-countdown-clock';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import { Button } from 'react-bootstrap';
+import { Radio, Space, BackTop } from 'antd';
 const Quiz = (props) => {
 
 
@@ -35,12 +36,13 @@ const Quiz = (props) => {
         }
 
         , [final])
-    const select = (id, given, correct) => {
+
+    const select = (id, value) => {
 
         props.selected.map((arrEl, ind) => {
             if (ind === id) {
-                arrEl.selected = given;
-                if (given === correct) {
+                arrEl.selected = value;
+                if (value === arrEl.correct_answer) {
                     arrEl.result = true;
                 }
                 else {
@@ -51,17 +53,33 @@ const Quiz = (props) => {
         })
 
     };
+    const renderTime = ({ remainingTime }) => {
+        if (remainingTime === 0) {
+            return <div className="timer">Too late...</div>;
+        }
+
+        return (
+            <div className="timer">
+                <div className="text">Remaining</div>
+                <div className="value"><h2 className="value">{remainingTime}</h2></div>
+                <div className="text">seconds</div>
+            </div>
+        );
+    };
 
 
     return (
         <div>
             <>
                 <div>
-                <ReactCountdownClock seconds={20}
-                     color="#000"
-                     alpha={0.9}
-                     size={300}
-                     onComplete={() => setFinal(true)} />
+                    <CountdownCircleTimer
+                        isPlaying
+                        duration={100}
+                        colors={[["#004777", 0.33], ["#F7B801", 0.33], ["#A30000"]]}
+                        onComplete={() => setFinal(true)}
+                    >{renderTime}
+                    </CountdownCircleTimer>
+
                 </div>
                 <div>
                     {props.selected.map((elem, index) => (
@@ -70,12 +88,23 @@ const Quiz = (props) => {
                             <span className="border">
                                 <div>
                                     <div>
-                                        <Button variant="outline-success" onClick={() => select(index, elem.choices[0], elem.correct_answer)} >{elem.choices[0]}</Button>
-                                        <Button variant="outline-success" onClick={() => select(index, elem.choices[1], elem.correct_answer)}>{elem.choices[1]}</Button>
-                                    </div>
-                                    <div>
-                                        <Button variant="outline-success" onClick={() => select(index, elem.choices[2], elem.correct_answer)}>{elem.choices[2]}</Button>
-                                        <Button variant="outline-success" onClick={() => select(index, elem.choices[3], elem.correct_answer)}>{elem.choices[3]}</Button>
+                                        <Radio.Group buttonStyle="solid">
+                                            <Space direction="vertical">
+                                                <Radio.Button id={index} value={elem.choices[0]}
+                                                    onChange={(e) => select(e.target.id, e.target.value)}
+                                                >{elem.choices[0]} </Radio.Button>
+                                                <Radio.Button id={index} value={elem.choices[1]}
+                                                    onChange={(e) => select(e.target.id, e.target.value)}
+                                                >{elem.choices[1]}</Radio.Button>
+                                                <Radio.Button id={index} value={elem.choices[2]}
+                                                    onChange={(e) => select(e.target.id, e.target.value)}>
+                                                    {elem.choices[2]}</Radio.Button>
+                                                <Radio.Button id={index} value={elem.choices[3]} onChange={(e) => select(e.target.id, e.target.value)}
+                                                >
+                                                    {elem.choices[3]}</Radio.Button>
+                                            </Space>
+                                        </Radio.Group>
+                                       
                                     </div>
                                 </div>
                             </span>
@@ -84,14 +113,16 @@ const Quiz = (props) => {
                     }
                 </div>
                 <div>
-                    <Button variant="primary" onClick={() => setFinal(true)} >Submit</Button>
+                    <Button variant="primary" onClick={() => setFinal()} >Submit</Button>
                 </div>
 
                 <div>
                     <h3>Right Answers: {right}</h3>
                     <h3>Wrong Answers: {wrong}</h3>
                 </div>
-
+                <BackTop>
+                    <div style={style}>Top</div>
+                </BackTop>
             </>
 
 
@@ -102,3 +133,13 @@ const Quiz = (props) => {
 }
 
 export default Quiz
+const style = {
+    height: 40,
+    width: 40,
+    lineHeight: '40px',
+    borderRadius: 4,
+    backgroundColor: '#1088e9',
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 14,
+  };

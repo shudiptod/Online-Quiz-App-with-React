@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import firebaseDb from '../../Firebase';
 import { Spinner, span, Button } from 'react-bootstrap';
+import { Spin, Space } from 'antd';
 import Quiz from './Quiz';
 
 const Computer = () => {
@@ -124,9 +125,14 @@ const Computer = () => {
 
 
   return loading ? (
-    <Spinner animation="border" role="status">
-      <span className="sr-only">Loading...</span>
-    </Spinner>
+    <div style={{ display: "flex", justifyContent: "center", justifyItems: "center" }}>
+      <Space size="middle">
+
+
+        <Spin size="large" />
+      </Space>
+    </div>
+
   )
     :
     (
